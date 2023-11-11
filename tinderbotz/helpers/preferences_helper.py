@@ -49,8 +49,8 @@ class PreferencesHelper:
 
         print("\nSlider of distance will be adjusted...")
         current_percentage = float(link.get_attribute('style').split(' ')[1].split('%')[0])
-        print("from {}% = {}km".format(current_percentage, current_percentage*1.6))
-        print("to {}% = {}km".format(final_percentage, final_percentage*1.6))
+        print(f"from {current_percentage}% = {current_percentage * 1.6}km")
+        print(f"to {final_percentage}% = {final_percentage * 1.6}km")
         print("with a fault margin of 1%\n")
 
         # start adjusting the distance slider
@@ -63,7 +63,9 @@ class PreferencesHelper:
             # update current percentage
             current_percentage = float(link.get_attribute('style').split(' ')[1].split('%')[0])
 
-        print("Ended slider with {}% = {}km\n\n".format(current_percentage, current_percentage*1.6))
+        print(
+            f"Ended slider with {current_percentage}% = {current_percentage * 1.6}km\n\n"
+        )
         time.sleep(5)
 
     def set_age_range(self, min, max):
@@ -82,21 +84,14 @@ class PreferencesHelper:
         max_age_tinder = int(btn_maxage.get_attribute('aria-valuemax'))
 
         # correct out of bounds values
-        if min < min_age_tinder:
-            min = min_age_tinder
-
-        if max > max_age_tinder:
-            max = max_age_tinder
-
+        min = max(min, min_age_tinder)
+        max = min(max, max_age_tinder)
         while max-min < 5:
             max += 1
             min -= 1
 
-            if min < min_age_tinder:
-                min = min_age_tinder
-            if max > max_age_tinder:
-                max = max_age_tinder
-
+            min = max(min, min_age_tinder)
+            max = min(max, max_age_tinder)
         range_ages_tinder = max_age_tinder - min_age_tinder
         percentage_per_year = 100 / range_ages_tinder
 
@@ -108,13 +103,15 @@ class PreferencesHelper:
 
         print("\nSlider of ages will be adjusted...")
         print("Minimum age will go ...")
-        print("from {}% = {} years old".format(current_percentage_min,
-                                               (current_percentage_min/percentage_per_year)+min_age_tinder))
-        print("to {}% = {} years old".format(to_percentage_min, min))
+        print(
+            f"from {current_percentage_min}% = {current_percentage_min / percentage_per_year + min_age_tinder} years old"
+        )
+        print(f"to {to_percentage_min}% = {min} years old")
         print("Maximum age will go ...")
-        print("from {}% = {} years old".format(current_percentage_max,
-                                               (current_percentage_max / percentage_per_year) + min_age_tinder))
-        print("to {}% = {} years old".format(to_percentage_max, max))
+        print(
+            f"from {current_percentage_max}% = {current_percentage_max / percentage_per_year + min_age_tinder} years old"
+        )
+        print(f"to {to_percentage_max}% = {max} years old")
         print("with a fault margin of 1%\n")
 
         # start adjusting the distance slider
@@ -136,8 +133,9 @@ class PreferencesHelper:
             current_percentage_min = float(btn_minage.get_attribute('style').split(' ')[1].split('%')[0])
             current_percentage_max = float(btn_maxage.get_attribute('style').split(' ')[1].split('%')[0])
 
-        print("Ended slider with ages from {} years old  to {} years old\n\n".format((current_percentage_min/percentage_per_year)+min_age_tinder,
-              (current_percentage_max / percentage_per_year) + min_age_tinder))
+        print(
+            f"Ended slider with ages from {current_percentage_min / percentage_per_year + min_age_tinder} years old  to {current_percentage_max / percentage_per_year + min_age_tinder} years old\n\n"
+        )
         time.sleep(5)
 
     def set_sexualitiy(self, type):
@@ -160,7 +158,7 @@ class PreferencesHelper:
                 element.click()
                 break
 
-        print("clicked on " + type.value)
+        print(f"clicked on {type.value}")
         time.sleep(5)
 
     def set_global(self, boolean, language=None):

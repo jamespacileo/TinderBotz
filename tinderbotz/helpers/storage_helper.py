@@ -37,57 +37,53 @@ class StorageHelper:
         except Exception as e:
             if amount_of_attempts < 20:
                 sleepy_time = amount_of_attempts * 30
-                print("Attempt number {}: sleeping for {} seconds ...".format(amount_of_attempts, sleepy_time))
+                print(
+                    f"Attempt number {amount_of_attempts}: sleeping for {sleepy_time} seconds ..."
+                )
                 time.sleep(sleepy_time)
                 return StorageHelper.store_image_as(url, directory, amount_of_attempts + 1)
             else:
                 # Settle with the fact this one won't be stored
-                error = "Amount of attempts exceeded in storage_helper\n" \
-                        "attempting to get url: {}\n" \
-                        "resulted in error: {}".format(url, e)
+                error = f"Amount of attempts exceeded in storage_helper\nattempting to get url: {url}\nresulted in error: {e}"
                 print(error)
                 return None
 
         temp_name = "temporary"
 
         if ".jpg" in url:
-            f = open("{}/{}/{}.jpg".format(os.getcwd(), directory, temp_name), 'wb')
-            f.write(response.read())
-            f.close()
-
+            with open(f"{os.getcwd()}/{directory}/{temp_name}.jpg", 'wb') as f:
+                f.write(response.read())
         elif '.webp' in url:
-            # save as a temporary file
-            f = open("{}.webp".format(temp_name), 'wb')
-            f.write(response.read())
-            f.close()
-
+            with open(f"{temp_name}.webp", 'wb') as f:
+                f.write(response.read())
             # open the file and convert the file to jpeg
-            im = Image.open("{}.webp".format(temp_name)).convert("RGB")
+            im = Image.open(f"{temp_name}.webp").convert("RGB")
             # save the jpeg file in the directory it belongs
-            im.save("{}/{}/{}.jpg".format(os.getcwd(), directory, temp_name), "jpeg")
+            im.save(f"{os.getcwd()}/{directory}/{temp_name}.jpg", "jpeg")
 
             # remove the temporary file
-            os.remove("{}.webp".format(temp_name))
+            os.remove(f"{temp_name}.webp")
 
         else:
             print("URL of image cannot be saved!")
             print("URL DOES NOT CONTAIN .JPG OR .WEBP EXTENSION")
             print(url)
 
-            error = "URL DOES NOT CONTAIN .JPG OR .WEBP EXTENSION: {}\n" \
-                    "Please add extension needed in storage_helper".format(url)
+            error = f"URL DOES NOT CONTAIN .JPG OR .WEBP EXTENSION: {url}\nPlease add extension needed in storage_helper"
             print(error)
 
         # rename saved image to their hashvalue, so it's easy to compare (hashes of) images later on
-        im = Image.open('{}/{}/{}.jpg'.format(os.getcwd(), directory, temp_name))
+        im = Image.open(f'{os.getcwd()}/{directory}/{temp_name}.jpg')
         hashvalue = hashlib.md5(im.tobytes()).hexdigest()
 
         # check if image already exists
-        if not os.path.isfile('{}/{}/{}.jpg'.format(os.getcwd(), directory, hashvalue)):
-            os.rename('{}/{}/{}.jpg'.format(os.getcwd(), directory, temp_name),
-                      '{}/{}/{}.jpg'.format(os.getcwd(), directory, hashvalue))
+        if not os.path.isfile(f'{os.getcwd()}/{directory}/{hashvalue}.jpg'):
+            os.rename(
+                f'{os.getcwd()}/{directory}/{temp_name}.jpg',
+                f'{os.getcwd()}/{directory}/{hashvalue}.jpg',
+            )
 
-        print("Image saved as {}/{}/{}.jpg".format(os.getcwd(), directory, hashvalue))
+        print(f"Image saved as {os.getcwd()}/{directory}/{hashvalue}.jpg")
 
         return hashvalue
 
@@ -97,7 +93,7 @@ class StorageHelper:
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        filepath = directory + "/{}.json".format(filename)
+        filepath = f"{directory}/{filename}.json"
 
         try:
             with open(filepath, "r", encoding='utf-8') as fp:

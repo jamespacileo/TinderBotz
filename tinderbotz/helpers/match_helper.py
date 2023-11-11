@@ -222,7 +222,7 @@ class MatchHelper:
             textbox.send_keys(message)
             textbox.send_keys(Keys.ENTER)
 
-            print("Message sent succesfully.\nmessage: {}\n".format(message))
+            print(f"Message sent succesfully.\nmessage: {message}\n")
 
             # sleep so message can be sent
             time.sleep(1.5)
@@ -290,11 +290,7 @@ class MatchHelper:
             print(e)
 
     def send_socials(self, chatid, media):
-        did_match = False
-        for social in (Socials):
-            if social == media:
-                did_match = True
-
+        did_match = any(social == media for social in Socials)
         if not did_match: print("Media must be of type Socials"); return
 
         if not self._is_chat_opened(chatid):
@@ -309,8 +305,8 @@ class MatchHelper:
 
             socials_btn.click()
             time.sleep(1)
-            
-            xpath = '//img[@alt="{}"]'.format(media.value)
+
+            xpath = f'//img[@alt="{media.value}"]'
             WebDriverWait(self.browser, self.delay).until(
                 EC.presence_of_element_located((By.XPATH, xpath)))
             social_btn = self.browser.find_elements(By.XPATH, xpath)[-1]
@@ -353,7 +349,7 @@ class MatchHelper:
     def _open_chat(self, chatid):
         if self._is_chat_opened(chatid): return;
 
-        href = "/app/messages/{}".format(chatid)
+        href = f"/app/messages/{chatid}"
 
         # look for the match with that chatid
         # first we're gonna look for the match in the already interacted matches
@@ -373,7 +369,7 @@ class MatchHelper:
             return self._open_chat(chatid)
 
         try:
-            match_button = self.browser.find_element(By.XPATH, '//a[@href="{}"]'.format(href))
+            match_button = self.browser.find_element(By.XPATH, f'//a[@href="{href}"]')
             self.browser.execute_script("arguments[0].click();", match_button)
 
         except Exception as e:
@@ -390,7 +386,7 @@ class MatchHelper:
             time.sleep(1)
 
             try:
-                matched_button = self.browser.find_element(By.XPATH, '//a[@href="{}"]'.format(href))
+                matched_button = self.browser.find_element(By.XPATH, f'//a[@href="{href}"]')
                 matched_button.click()
             except Exception as e:
                 # some kind of error happened, probably cuz chatid/ref/match doesnt exist (anymore)
@@ -483,7 +479,7 @@ class MatchHelper:
                 rowdata['home'] = value.split(' ')[-1]
             if svg == self._GENDER_SVG_PATH:
                 rowdata['gender'] = value
-            if svg == self._LOCATION_SVG_PATH or svg == self._LOCATION_SVG_PATH_2:
+            if svg in [self._LOCATION_SVG_PATH, self._LOCATION_SVG_PATH_2]:
                 distance = value.split(' ')[0]
                 try:
                     distance = int(distance)
@@ -501,13 +497,9 @@ class MatchHelper:
         if not self._is_chat_opened(chatid):
             self._open_chat(chatid)
 
-        passions = []
         xpath = f'{content}/div/div[1]/div/main/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div/div/div[2]/div[2]/div'
         elements = self.browser.find_elements(By.XPATH, xpath)
-        for el in elements:
-            passions.append(el.text)
-
-        return passions
+        return [el.text for el in elements]
 
     def get_bio(self, chatid):
         if not self._is_chat_opened(chatid):
@@ -570,7 +562,4 @@ class MatchHelper:
 
     def _is_chat_opened(self, chatid):
         # open the correct user if not happened yet
-        if chatid in self.browser.current_url:
-            return True
-        else:
-            return False
+        return chatid in self.browser.current_url

@@ -208,11 +208,15 @@ class Session:
 
         # store its images
         for url in match.image_urls:
-            hashed_image = StorageHelper.store_image_as(url=url, directory='data/{}/images'.format(filename))
+            hashed_image = StorageHelper.store_image_as(
+                url=url, directory=f'data/{filename}/images'
+            )
             match.images_by_hashes.append(hashed_image)
 
         # store its userdata
-        StorageHelper.store_match(match=match, directory='data/{}'.format(filename), filename=filename)
+        StorageHelper.store_match(
+            match=match, directory=f'data/{filename}', filename=filename
+        )
 
     def like(self, amount=1, ratio='100%', sleep=1, randomize_sleep = True):
         
@@ -417,7 +421,6 @@ class Session:
             except:
                 print("Some error occurred when trying to send mail.")
                 print("Consider opening an Issue on Github.")
-                pass
             return "POPUP: Dismissed NEW MATCH"
 
         # try to say 'no thanks' to buy more (super)likes
@@ -435,8 +438,6 @@ class Session:
         except:
             # TBD add stale element exception for now just refresh page
             self.browser.refresh()
-            pass
-
         # Deny confirmation of email
         try:
             xpath = './/main/div/div[1]/div[2]/button[2]'
@@ -466,16 +467,15 @@ class Session:
 
     def _is_logged_in(self):
         # make sure tinder website is loaded for the first time
-        if not "tinder" in self.browser.current_url:
+        if "tinder" not in self.browser.current_url:
             # enforce english language
             self.browser.get("https://tinder.com/?lang=en")
             time.sleep(1.5)
 
         if "tinder.com/app/" in self.browser.current_url:
             return True
-        else:
-            print("User is not logged in yet.\n")
-            return False
+        print("User is not logged in yet.\n")
+        return False
 
     def _get_msg_box(self, lines, indent=1, width=None, title=None):
         """Print message-box with optional title."""

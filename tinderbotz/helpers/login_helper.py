@@ -275,7 +275,6 @@ class LoginHelper:
                 "ACCEPTING COOKIES: Loading took too much time! Element probably not presented, so we continue.")
         except Exception as e:
             print("Error cookies", e)
-            pass
 
     def _change_focus_to_pop_up(self):
         max_tries = 50

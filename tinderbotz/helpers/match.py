@@ -13,7 +13,7 @@ class Match(Geomatch):
         return self.chatid
 
     def get_dictionary(self):
-        data = {
+        return {
             "name": self.get_name(),
             "age": self.get_age(),
             "work": self.get_work(),
@@ -25,6 +25,5 @@ class Match(Geomatch):
             "passions": self.get_passions(),
             "image_urls": self.image_urls,
             "images_by_hashes": self.images_by_hashes,
-            "chatid": self.get_chat_id()
+            "chatid": self.get_chat_id(),
         }
-        return data
