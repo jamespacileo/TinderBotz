@@ -236,7 +236,7 @@ class GeomatchHelper:
                 rowdata['home'] = value.split(' ')[-1]
             if svg == self._GENDER_SVG_PATH:
                 rowdata['gender'] = value
-            if svg == self._LOCATION_SVG_PATH or svg == self._LOCATION_SVG_PATH_2:
+            if svg in [self._LOCATION_SVG_PATH, self._LOCATION_SVG_PATH_2]:
                 distance = value.split(' ')[0]
                 try:
                     distance = int(distance)
@@ -288,8 +288,8 @@ class GeomatchHelper:
             sections = self.browser.find_elements(By.CSS_SELECTOR, "div[class='Px(16px) Py(12px)']")
             for section in sections:
                 headline = section.find_element(By.TAG_NAME, "h2").text.lower()
-                
-                if headline in infoItems.keys():
+
+                if headline in infoItems:
                     infoElements = section.find_elements(By.CSS_SELECTOR, "div[class^='Bdrs(100px)']")
                     for infoElement in infoElements:
                         infoItems[headline].append(infoElement.text)
@@ -304,11 +304,11 @@ class GeomatchHelper:
                     print("Unknown Sect Headline:", headline)
 
 
-            #if ('Passions' in passions_el.find_element(By.TAG_NAME, "h2").text):
-            #    #print("Passions Text", passions_el.text)
-            #    elements = passions_el.find_element(By.TAG_NAME, 'div').find_element(By.TAG_NAME, 'div').find_elements(By.TAG_NAME, 'div')
-            #    for el in elements:
-            #        passions.append(el.text)
+                #if ('Passions' in passions_el.find_element(By.TAG_NAME, "h2").text):
+                #    #print("Passions Text", passions_el.text)
+                #    elements = passions_el.find_element(By.TAG_NAME, 'div').find_element(By.TAG_NAME, 'div').find_elements(By.TAG_NAME, 'div')
+                #    for el in elements:
+                #        passions.append(el.text)
         except Exception as e:
             pass
 
@@ -425,10 +425,7 @@ class GeomatchHelper:
                 return ig.replace('@', '')
             elif ig in valid_pattern:
                 try:
-                    if ':' in description[x + 1]:
-                        return description[x + 2]
-                    else:
-                        return description[x + 1]
+                    return description[x + 2] if ':' in description[x + 1] else description[x + 1]
                 except:
                     return None
             else:
@@ -445,7 +442,4 @@ class GeomatchHelper:
         time.sleep(5)
 
     def _is_profile_opened(self):
-        if '/profile' in self.browser.current_url:
-            return True
-        else:
-            return False
+        return '/profile' in self.browser.current_url

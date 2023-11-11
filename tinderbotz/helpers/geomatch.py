@@ -26,8 +26,7 @@ class Geomatch:
     def get_images_ai_data(self):
         images_ai_data = []
         for image in self.image_urls:
-            for image_ai_data in self._get_image_ai_data(image):
-                images_ai_data.append(image_ai_data)
+            images_ai_data.extend(iter(self._get_image_ai_data(image)))
         return images_ai_data
 
     def _get_image_ai_data(self, image_url):
@@ -91,7 +90,7 @@ class Geomatch:
         return self.id
 
     def get_dictionary(self):
-        data = {
+        return {
             "name": self.get_name(),
             "age": self.get_age(),
             "work": self.get_work(),
@@ -109,4 +108,3 @@ class Geomatch:
             "images_by_hashes": self.images_by_hashes,
             "instagram": self.get_instagram(),
         }
-        return data

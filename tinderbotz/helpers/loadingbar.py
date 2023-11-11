@@ -19,15 +19,12 @@ class LoadingBar:
         else:
             percentage_loaded = int((index + 1)*100 / self.length_of_loop)
 
-        if percentage_loaded > 100:
-            percentage_loaded = 100
-
+        percentage_loaded = min(percentage_loaded, 100)
         # [===>----] 45% of new matches scraped
         amount_of_equals = int(percentage_loaded / 100 * self.amount_of_bars)
         amount_of_minus = self.amount_of_bars - amount_of_equals - 1
 
-        printout = "[{}>{}] {}% of the {} handled.".format('=' * amount_of_equals, '-' * amount_of_minus, percentage_loaded,
-                                            self.explanation)
+        printout = f"[{'=' * amount_of_equals}>{'-' * amount_of_minus}] {percentage_loaded}% of the {self.explanation} handled."
         sys.stdout.write(printout)
         sys.stdout.flush()
         time.sleep(0.25)
